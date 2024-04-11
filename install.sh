@@ -63,8 +63,11 @@ EOF
 
 
 gen_data() {
+    userproxy=$(random)
+    passproxy=$(random)
+    portplus=$((port + 1))
     seq $FIRST_PORT $LAST_PORT | while read port; do
-        echo "$(random)/$(random)$port/$IP4/$port/$(gen64 $IP6)"
+        echo "$userproxy/$passproxy$portplus/$IP4/$port/$(gen64 $IP6)"
     done
 }
 
