@@ -63,9 +63,9 @@ EOF
 
 
 gen_data() {
-portplus=$port+1
+
     seq $FIRST_PORT $LAST_PORT | while read port; do
-        echo "$(random)/$(random)$portplus/$IP4/$port/$(gen64 $IP6)"
+        echo "$(random)/$(random)0$port/$IP4/$port/$(gen64 $IP6)"
     done
 }
 
