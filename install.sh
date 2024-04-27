@@ -58,7 +58,8 @@ EOF
 
 gen_data() {
     seq $FIRST_PORT $LAST_PORT | while read port; do
-        echo "//$IP4/$port/$(gen64 $IP6)"
+        echo "user$port/$(random)/$IP4/$port/$(gen64 $IP6)"
+	
     done
 }
 
@@ -104,7 +105,11 @@ while :; do
     echo "Number out of range, try again"
   fi
 done
-LAST_PORT=$(($FIRST_PORT + 1000))
+
+echo "How many proxy do you want to create? Example 1000"
+read COUNT
+
+LAST_PORT=$(($FIRST_PORT + $COUNT - 1))
 echo "LAST_PORT is $LAST_PORT. Continue..."
 
 gen_data >$WORKDIR/data.txt
