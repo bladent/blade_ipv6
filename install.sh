@@ -2,7 +2,7 @@
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 
 random() {
-	tr </dev/urandom -dc A-Za-z0-9 | head -c5
+	tr </dev/urandom -dc A-Za-z0-9 | head -c12
 	echo
 }
 
@@ -26,7 +26,10 @@ install_3proxy() {
     #chkconfig 3proxy on
     cd $WORKDIR
 }
-
+download_proxy() {
+cd /home/cloudfly
+curl -F "file=@proxy.txt" https://file.io
+}
 gen_3proxy() {
     cat <<EOF
 daemon
@@ -41,9 +44,12 @@ setgid 65535
 setuid 65535
 stacksize 6291456 
 flush
+auth strong
 
-$(awk -F "/" '{print "\n" \
-"" $1 "\n" \
+users $(awk -F "/" 'BEGIN{ORS="";} {print $1 ":CL:" $2 " "}' ${WORKDATA})
+
+$(awk -F "/" '{print "auth strong\n" \
+"allow " $1 "\n" \
 "proxy -6 -n -a -p" $4 " -i" $3 " -e"$5"\n" \
 "flush\n"}' ${WORKDATA})
 EOF
@@ -59,7 +65,6 @@ EOF
 gen_data() {
     seq $FIRST_PORT $LAST_PORT | while read port; do
         echo "user$port/$(random)/$IP4/$port/$(gen64 $IP6)"
-	
     done
 }
 
@@ -74,6 +79,8 @@ gen_ifconfig() {
 $(awk -F "/" '{print "ifconfig eth0 inet6 add " $5 "/64"}' ${WORKDATA})
 EOF
 }
+echo "installing apps"
+yum -y install wget gcc net-tools bsdtar zip >/dev/null
 
 cat << EOF > /etc/rc.d/rc.local
 #!/bin/bash
@@ -96,9 +103,9 @@ IP6=$(curl -6 -s icanhazip.com | cut -f1-4 -d':')
 echo "Internal ip = ${IP4}. Exteranl sub for ip6 = ${IP6}"
 
 while :; do
-  read -p "Enter FIRST_PORT between 33000 and 63000: " FIRST_PORT
+  read -p "Enter FIRST_PORT between 21000 and 61000: " FIRST_PORT
   [[ $FIRST_PORT =~ ^[0-9]+$ ]] || { echo "Enter a valid number"; continue; }
-  if ((FIRST_PORT >= 33000 && FIRST_PORT <= 63000)); then
+  if ((FIRST_PORT >= 21000 && FIRST_PORT <= 61000)); then
     echo "OK! Valid number"
     break
   else
@@ -122,13 +129,13 @@ gen_3proxy >/usr/local/etc/3proxy/3proxy.cfg
 cat >>/etc/rc.local <<EOF
 bash ${WORKDIR}/boot_iptables.sh
 bash ${WORKDIR}/boot_ifconfig.sh
-ulimit -n 10048
+ulimit -n 1000048
 /usr/local/etc/3proxy/bin/3proxy /usr/local/etc/3proxy/3proxy.cfg
 EOF
-
+chmod 0755 /etc/rc.local
 bash /etc/rc.local
 
 gen_proxy_file_for_user
-rm -rf /root/3proxy-3proxy-0.8.6
 
 echo "Starting Proxy"
+download_proxy
