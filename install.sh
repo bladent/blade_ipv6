@@ -2,7 +2,7 @@
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 
 random() {
-	tr </dev/urandom -dc A-Za-z0-9 | head -c12
+	tr </dev/urandom -dc A-Za-z0-9 | head -c10
 	echo
 }
 
@@ -64,7 +64,7 @@ EOF
 
 gen_data() {
     seq $FIRST_PORT $LAST_PORT | while read port; do
-        echo "user$port/$(random)/$IP4/$port/$(gen64 $IP6)"
+        echo "userVIP$port/$(random)/$IP4/$port/$(gen64 $IP6)"
     done
 }
 
