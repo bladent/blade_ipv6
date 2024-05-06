@@ -26,10 +26,7 @@ install_3proxy() {
     #chkconfig 3proxy on
     cd $WORKDIR
 }
-download_proxy() {
-cd /home/cloudfly
-curl -F "file=@proxy.txt" https://file.io
-}
+
 gen_3proxy() {
     cat <<EOF
 daemon
