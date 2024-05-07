@@ -3,10 +3,9 @@ PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 
 
 random() {
-	tr </dev/urandom -dc A-Za-z | head -c6
+	tr </dev/urandom -dc A-Z | head -c6
 	echo
 }
-
 
 array=(1 2 3 4 5 6 7 8 9 0 a b c d e f)
 gen64() {
