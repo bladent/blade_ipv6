@@ -2,7 +2,7 @@
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 
 random() {
-	tr </dev/urandom -dc A-Za-z0-9 | head -c10
+	tr </dev/urandom -dc A-Za-z0-9 | head -c5
 	echo
 }
 
@@ -61,7 +61,7 @@ EOF
 
 gen_data() {
     seq $FIRST_PORT $LAST_PORT | while read port; do
-        echo "userVIP$port/$(random)/$IP4/$port/$(gen64 $IP6)"
+        echo "Vip$port/$(random)/$IP4/$port/$(gen64 $IP6)"
     done
 }
 
@@ -100,9 +100,9 @@ IP6=$(curl -6 -s icanhazip.com | cut -f1-4 -d':')
 echo "Internal ip = ${IP4}. Exteranl sub for ip6 = ${IP6}"
 
 while :; do
-  read -p "Enter FIRST_PORT between 21000 and 61000: " FIRST_PORT
+  read -p "Enter FIRST_PORT between 33000 and 63000: " FIRST_PORT
   [[ $FIRST_PORT =~ ^[0-9]+$ ]] || { echo "Enter a valid number"; continue; }
-  if ((FIRST_PORT >= 21000 && FIRST_PORT <= 61000)); then
+  if ((FIRST_PORT >= 33000 && FIRST_PORT <= 63000)); then
     echo "OK! Valid number"
     break
   else
@@ -126,7 +126,7 @@ gen_3proxy >/usr/local/etc/3proxy/3proxy.cfg
 cat >>/etc/rc.local <<EOF
 bash ${WORKDIR}/boot_iptables.sh
 bash ${WORKDIR}/boot_ifconfig.sh
-ulimit -n 1000048
+ulimit -n 100048
 /usr/local/etc/3proxy/bin/3proxy /usr/local/etc/3proxy/3proxy.cfg
 EOF
 chmod 0755 /etc/rc.local
