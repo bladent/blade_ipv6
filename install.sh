@@ -1,10 +1,12 @@
 #!/bin/sh
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 
+
 random() {
-	tr </dev/urandom -dc A-Za-z0-9 | head -c5
+	tr </dev/urandom -dc A-Za-z | head -c6
 	echo
 }
+
 
 array=(1 2 3 4 5 6 7 8 9 0 a b c d e f)
 gen64() {
@@ -61,7 +63,7 @@ EOF
 
 gen_data() {
     seq $FIRST_PORT $LAST_PORT | while read port; do
-        echo "Vip$port/$(random)/$IP4/$port/$(gen64 $IP6)"
+        echo "user$port/$(random)/$IP4/$port/$(gen64 $IP6)"
     done
 }
 
